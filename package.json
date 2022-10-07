@@ -6,6 +6,6 @@
         "trailingComma": "es5",
         "semi": false,
         "singleQuote": false,
-        "printWidth": 150
+        "printWidth": 80
     }
 }
