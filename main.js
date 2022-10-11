@@ -10,9 +10,8 @@ animate()
 
 function animate() {
   car.update()
-  
+
   canvas.height = window.innerHeight
   car.draw(ctx)
   requestAnimationFrame(animate)
 }
-
