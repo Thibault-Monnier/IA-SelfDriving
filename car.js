@@ -34,7 +34,6 @@ class Car {
     if (this.speed < -this.maxSpeed / 2) {
       this.speed = -this.maxSpeed / 2
     }
-
     if (this.speed > 0) {
       this.speed -= this.friction
     }
@@ -45,7 +44,8 @@ class Car {
       this.speed = 0
     }
 
-    this.y -= this.speed
+    this.x -= Math.sin(this.angle) * this.speed
+    this.y -= Math.cos(this.angle) * this.speed
   }
 
   draw(ctx) {
