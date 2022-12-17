@@ -69,7 +69,7 @@ class Car {
     ctx.fill()
 
     ctx.restore()
-    
+
     this.sensor.draw(ctx)
   }
 }
