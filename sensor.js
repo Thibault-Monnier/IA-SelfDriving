@@ -16,47 +16,27 @@ class Sensor {
 
   #getReadings(roadBorders) {
     return this.rays.map((ray) => {
-      const intersections = roadBorders.map((border) => {
-        const intersection = this.#lineIntersection(
-          ray[0],
-          ray[1],
-          border[0],
-          border[1]
-        )
-        return intersection
-      })
-      const closestIntersection = intersections.reduce(
-        (closest, current) => {
-          if (current === null) return closest
-          const currentDistance = this.#distance(ray[0], current)
-          const closestDistance = this.#distance(ray[0], closest)
-          return currentDistance < closestDistance ? current : closest
-        },
-        { x: 0, y: 0 }
+      const intersections = roadBorders
+        .map((border) => {
+          const intersection = getIntersection(
+            ray[0],
+            ray[1],
+            border[0],
+            border[1]
+          )
+          return intersection
+        })
+        .filter((intersection) => intersection !== null)
+
+      if (intersections.length === 0) return null
+      return intersections.reduce(
+        (closest, intersection) =>
+          this.#distance(ray[0], intersection) < this.#distance(ray[0], closest)
+            ? intersection
+            : closest,
+        { x: Infinity, y: Infinity }
       )
-      return this.#distance(ray[0], closestIntersection)
     })
-  }
-
-  #lineIntersection(a1, a2, b1, b2) {
-    const denominator =
-      (a1.x - a2.x) * (b1.y - b2.y) - (a1.y - a2.y) * (b1.x - b2.x)
-    if (denominator === 0) return null
-
-    const t =
-      ((a1.x - b1.x) * (b1.y - b2.y) - (a1.y - b1.y) * (b1.x - b2.x)) /
-      denominator
-    const u =
-      -((a1.x - a2.x) * (a1.y - b1.y) - (a1.y - a2.y) * (a1.x - b1.x)) /
-      denominator
-
-    if (t > 0 && t < 1 && u > 0) {
-      return {
-        x: a1.x + t * (a2.x - a1.x),
-        y: a1.y + t * (a2.y - a1.y),
-      }
-    }
-    return null
   }
 
   #distance(a, b) {
@@ -86,12 +66,24 @@ class Sensor {
 
   draw(ctx) {
     for (let i = 0; i < this.rayCount; i++) {
+      const start = this.rays[i][0]
+      const end = this.rays[i][1]
+
       ctx.beginPath()
       ctx.lineWidth = 2
       ctx.strokeStyle = "yellow"
-      ctx.moveTo(this.rays[i][0].x, this.rays[i][0].y)
-      ctx.lineTo(this.rays[i][1].x, this.rays[i][1].y)
+      ctx.moveTo(start.x, start.y)
+      ctx.lineTo(end.x, end.y)
       ctx.stroke()
+
+      const reading = this.readings[i]
+
+      if (reading !== null) {
+        ctx.beginPath()
+        ctx.arc(reading.x, reading.y, 4, 0, 2 * Math.PI)
+        ctx.fillStyle = "red"
+        ctx.fill()
+      }
     }
   }
 }
