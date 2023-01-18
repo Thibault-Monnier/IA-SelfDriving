@@ -29,13 +29,17 @@ class Sensor {
         .filter((intersection) => intersection !== null)
 
       if (intersections.length === 0) return null
-      return intersections.reduce(
+      const closest = intersections.reduce(
         (closest, intersection) =>
           this.#distance(ray[0], intersection) < this.#distance(ray[0], closest)
             ? intersection
             : closest,
         { x: Infinity, y: Infinity }
       )
+      return {
+        ...closest,
+        offset: this.#distance(ray[0], closest) / this.rayLength,
+      }
     })
   }
 
