@@ -4,8 +4,8 @@ class Road {
     this.width = width
     this.laneCount = laneCount
 
-    this.left = x - this.width / 2
-    this.right = x + this.width / 2
+    this.left = x - width / 2
+    this.right = x + width / 2
 
     const infinity = 1000000
     this.top = -infinity
@@ -36,7 +36,7 @@ class Road {
 
     for (let i = 1; i <= this.laneCount - 1; i++) {
       const x = lerp(this.left, this.right, i / this.laneCount)
-        
+
       ctx.setLineDash([20, 20])
       ctx.beginPath()
       ctx.moveTo(x, this.top)
@@ -45,7 +45,7 @@ class Road {
     }
 
     ctx.setLineDash([])
-    this.borders.forEach(border => {
+    this.borders.forEach((border) => {
       ctx.beginPath()
       ctx.moveTo(border[0].x, border[0].y)
       ctx.lineTo(border[1].x, border[1].y)
