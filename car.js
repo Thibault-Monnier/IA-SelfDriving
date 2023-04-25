@@ -17,7 +17,40 @@ class Car {
 
   update(roadBorders) {
     this.#move()
+    this.polygon = this.#createPolygon()
     this.sensor.update(roadBorders)
+    this.corners = this.#createPolygon()
+  }
+
+  #createPolygon() {
+    //return the four corners of the car using width and height and angle
+    const points = []
+    const rad = Math.hypot(this.width, this.height) / 2
+    const alpha = Math.atan2(this.width, this.height)
+    points.push({
+      x: this.x - Math.sin(this.angle - alpha) * rad,
+      y: this.y - Math.cos(this.angle - alpha) * rad,
+    })
+    points.push({
+      x: this.x - Math.sin(this.angle + alpha) * rad,
+      y: this.y - Math.cos(this.angle + alpha) * rad,
+    })
+    points.push({
+      x: this.x - Math.sin(this.angle + Math.PI - alpha) * rad,
+      y: this.y - Math.cos(this.angle + Math.PI - alpha) * rad,
+    })
+    points.push({
+      x: this.x - Math.sin(this.angle + Math.PI + alpha) * rad,
+      y: this.y - Math.cos(this.angle + Math.PI + alpha) * rad,
+    })
+    return points
+  }
+
+  #rotate(point, angle) {
+    return {
+      x: point.x * Math.cos(angle) - point.y * Math.sin(angle),
+      y: point.x * Math.sin(angle) + point.y * Math.cos(angle),
+    }
   }
 
   #move() {
@@ -60,15 +93,12 @@ class Car {
   }
 
   draw(ctx) {
-    ctx.save()
-    ctx.translate(this.x, this.y)
-    ctx.rotate(-this.angle)
-
     ctx.beginPath()
-    ctx.rect(-this.width / 2, -this.height / 2, this.width, this.height)
+    ctx.moveTo(this.polygon[0].x, this.polygon[0].y)
+    for (let i = 1; i < this.polygon.length; i++) {
+      ctx.lineTo(this.polygon[i].x, this.polygon[i].y)
+    }
     ctx.fill()
-
-    ctx.restore()
 
     this.sensor.draw(ctx)
   }
