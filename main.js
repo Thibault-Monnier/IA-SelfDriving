@@ -1,15 +1,16 @@
-const carCanvas = document.getElementById("carCanvas")
+const carCanvas = document.getElementById('carCanvas')
 carCanvas.width = 200
-const networkCanvas = document.getElementById("networkCanvas")
+const networkCanvas = document.getElementById('networkCanvas')
 networkCanvas.width = 320
 
-const carCtx = carCanvas.getContext("2d")
-const networkCtx = networkCanvas.getContext("2d")
+const carCtx = carCanvas.getContext('2d')
+const networkCtx = networkCanvas.getContext('2d')
 
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9)
 
 const N = 1000
 const cars = generateCars(N)
+const previousBest = cars[0]
 let bestCar = cars[0]
 if (localStorage.getItem("bestBrain")) {
   for (let i = 0; i < cars.length; i++) {
@@ -71,12 +72,22 @@ function animate(time) {
     traffic[i].draw(carCtx, "red")
   }
 
-  carCtx.globalAlpha = 0.2
+  // Draw all cars with low opacity except the previousBest and the bestCar
   for (let i = 0; i < cars.length; i++) {
-    cars[i].draw(carCtx, "blue")
+    if (cars[i] !== previousBest && cars[i] !== bestCar) {
+      carCtx.globalAlpha = 0.2
+      cars[i].draw(carCtx, 'blue')
+    }
   }
-  carCtx.globalAlpha = 1
-  bestCar.draw(carCtx, "blue", true)
+
+  // Draw the previousBest and the bestCar last and with full opacity
+  carCtx.globalAlpha = 0.75
+  if (bestCar === previousBest) {
+    previousBest.draw(carCtx, 'green', true)
+  } else {
+    previousBest.draw(carCtx, 'green')
+    bestCar.draw(carCtx, 'blue', true)
+  }
 
   carCtx.restore()
 
